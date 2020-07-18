@@ -4,6 +4,8 @@ const path = require('path');
 // const cookieSession = require('cookie-session');
 // const passport = require('passport');
 // const keys = require('./config/keys');
+const cors = require("cors");
+const enforce = require("express-sslify");
 const bodyParser = require('body-parser');
 const app = express();
 const dotenv = require("dotenv");
@@ -22,6 +24,9 @@ if (process.env.NODE_ENV !== 'production') dotenv.config({ path: './config.env' 
 
 // data parsing -->
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
+app.use(cors());
 app.set("trust proxy", true);
 // <-- data parsing
 
@@ -53,6 +58,10 @@ if (process.env.NODE_ENV === 'production') {
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
     });
+
+    app.get("/service-worker.js", (req, res) => {
+      res.sendFile(path.join(__dirname, "client", "build", "service-worker.js"));
+    });
 }
 
 // app.configure("production", () => {
@@ -69,9 +78,11 @@ if (process.env.NODE_ENV === 'production') {
 //setup port -->
 const port = process.env.PORT || 5000;
 // app.listen(PORT);
-const server = app.listen(port, () => {
+const server = app.listen(port, (error) => {
+  if (error) throw error;
   log(`Express server started running on port ${port}...`);
 });
+
 // <-- setup port
 
 // Simple one-liner server run:
