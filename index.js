@@ -50,17 +50,17 @@ app.set("trust proxy", true);
 if (process.env.NODE_ENV === 'production') {
 
   console.log("WOW! I am in production :D ");
-  // app.use(express.static('client/build'));
-  app.use(express.static(path.join(__dirname, 'client', 'build')));
+  // app.use(express.static('/build'));
+  app.use(express.static(path.join(__dirname, 'build')));
     // Express will serve up production assets and files like main.js & main.css
 
     // Express will serve up index.html if route isn't recognized
     app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+        res.sendFile(path.join(__dirname, 'build', 'index.html'));
     });
 
     app.get("/service-worker.js", (req, res) => {
-      res.sendFile(path.join(__dirname, "client", "build", "service-worker.js"));
+      res.sendFile(path.join(__dirname, "build", "service-worker.js"));
     });
 }
 
